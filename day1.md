@@ -35,15 +35,44 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
 - count(DISTINCT <column>)  -   print how many uniques
 - distinct <column> -   like pd.value_counts(). shows just the uniques
 - distinct <column1>, <column2>...  -   deliver all possible combinations of columns and returning it in a distinct list
-- 
+- SUM
+- AVG
+- MAX / MIX ... 
     
 -------------------------
+# cast / extract
+casting = when you change the type of a column
+DATE:   we need to cast the date like in the example
 
-   
+extract = get some info that it's with more information in a row (it's like a pandas explode, or pd.split and create new columns, or an unwind in mongodb). it's cool because extract create new columns with the wanted information
+
+        select 
+        start_time as start_time_timestamp,
+        cast(start_time as date) as start_time_date,
+        extract (hour from start_time) as start_time_hour,
+        extract (day from start_time) as start_time_day,
+        extract (year from start_time) as start_time_year,
+        extract (month from start_time) as start_time_month,
+        extract(week from start_time) as start_time_week
+        FROM
+        `bigquery-public-data.austin_bikeshare.bikeshare_trips` 
+        WHERE start_time > '2018-10-01'  #date format is type(str) #maybe you need to cast(start_time as date)
+        LIMIT
+        100
+        
+We can also do:
+
+        where extract (hour from start_time) IN (17,18, 19, 20)
+        
+
+        
+(we can do this because is UTC format)
+
+
 
 # FROM
 
-        table/whatever
+
 
 # WHERE (aditional conditions)
 
@@ -71,6 +100,33 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
         WHERE <column> in (a,b)   #a,b parameters
         (exactly like <column> = a or <column> = b
         
+- is null / is not null
+
+    CUIDAO! 
+    SELECT count(*) :   counts everything
+            count(<column>):    count just not nulls
+    
+    So, if you write:
+    
+        SELECT 
+        count(*) AS count1,
+        count(dropoff_location) AS count2
+        FROM
+        `bigquery-public-data.chicago_taxi_trips.taxi_trips` 
+        WHERE dropoff_location is null
+    
+    The output is:
+        count1: a lot
+        count2: 0
+        
+    Nevertheless if we write:
+    
+        WHERE dropoff_location is null
+        
+    Then both columns has the same lenght
+    
+
+
 - Looking for some text or word
 
         WHERE 
@@ -85,9 +141,24 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
         WHERE
         lower(<column> like '%word%')
         
+# GROUP BY
 
+- like in pandas
+- you only use HAVING when using a GROUP BY
 
-..
+        select 
+            name, sum(number) as sum
+        from `bigquery-public-data.usa_names.usa_1910_2013` 
+        where
+            gender = "F"
+        group by
+            name
+        having
+            num_people >1000000
+        limit 1000
+
+..----------------
+
 # LIMIT
 
 - limit the number of shown records
@@ -95,7 +166,7 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
 # ORDER BY
 
 - <column1> ASC / DESC, <column2> ASC/DESC  ...
--  
+  
 
 
 # Chicago Crime dataset
