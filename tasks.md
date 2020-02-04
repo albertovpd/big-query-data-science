@@ -1,4 +1,4 @@
-# Quizz 1.
+# Quizz 1. Start.
 
 3. In the data set, `bigquery-public-data.new_york.311_service_requests`, how many distinct agency names are there in the agency_name column?
 
@@ -60,14 +60,130 @@ FROM   `bigquery-public-data.usa_names.usa_1910_current`
 ORDER BY   state ASC
 
         check it out
+--------------------------------
 
+# Quizz 3. Playing with "where stuff"
+
+1. Consider the data set `bigquery-public-data.austin_bikeshare.bikeshare_trips`. How many unique rides involved the bike with a bikeid of 446.
+
+        SELECT
+        COUNT(*) AS num_rides 
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE bikeid = "446"
         
+        # be careful, bikeid should be integer but it's string type
+        
+2. For the bike with bikeid=446, what was the time of its longest ride in minutes?
+        
+        SELECT
+        duration_minutes
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE bikeid = "446"
+        ORDER BY duration_minutes DESC
 
+3. How many bike rides started at the station Zilker Park West?
 
+        SELECT
+        count(trip_id)
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE start_station_name="Zilker Park West"
 
+4. How many bike rides started at "Capital Metro HQ - East 5th at Broadway" and ended at "ACC - West & 12th Street".
 
+        SELECT
+        count(trip_id)
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE 
+        start_station_name="Capital Metro HQ - East 5th at Broadway" 
+        and
+        end_station_name="ACC - West & 12th Street"
+        
+5. How many bike rides started and ended at the same location? HINT: You can use a where clause and set the start location = end location.
 
+- My answer: 184130 rides
 
+        SELECT
+        count(trip_id)
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE start_station_name=end_station_name
+        
+- The right answer: 159325 rides
 
+        SELECT
+        COUNT(*) AS num_rides 
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips` 
+        WHERE start_station_name = end_station_name
 
-    
+To count the trip_id or everything should be the same. It makes no sense that I got more rows than if I had selected everything
+
+6. How many rides had a trip duration of exactly one hour or less?
+
+        SELECT
+        count(bikeid)
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE duration_minutes <= 60
+        
+7. How many bike rides had a trip duration between 1 and 2 hours (including both 1 and 2 hour trips)?
+
+        SELECT
+        COUNT(*) AS bike_rides
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE duration_minutes >= 60 and duration_minutes <= 120
+
+8. How many bike rides were strictly greater than 3 hours?
+
+        SELECT
+        COUNT(*) AS bike_rides
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE duration_minutes > 60*3
+        
+9. Consider the following two types of bike rides: 
+1. Started at  "ACC - West & 12th Street" and ended at "Zilker Park West"
+2. Started at "Nueces @ 3rd" and ended at "Toomey Rd @ South Lamar"
+Of all these types of bike rides, what was the shortest trip duration in minutes?
+
+        SELECT duration_minutes 
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips` 
+        WHERE 
+        (start_station_name = "ACC - West & 12th Street" AND end_station_name = "Zilker Park West") 
+        OR 
+        (start_station_name = "Nueces @ 3rd" AND end_station_name = "Toomey Rd @ South Lamar") 
+        ORDER BY duration_minutes ASC LIMIT 10
+
+10. The subscriber_type  column is a string type column. You can see all the different distinct strings in this column from this query:
+
+SELECT
+  DISTINCT subscriber_type
+FROM
+  `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+
+How many of these distinct strings contain the pattern "B-cycle".
+You could count them manually but that is not a scalable solution.
+You can answer this question using a LIKE statement.
+
+        SELECT count(DISTINCT subscriber_type)
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE subscriber_type like "%B-cycle%"
+
+11. Consider all the bike rides with a subscriber_type that starts with the letter "W". How many bike rides is this?
+
+        SELECT count(subscriber_type)
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE subscriber_type like "W%"         #if must start with W, don't put % in the beginning
+        
+12. How many bike rides meet the following conditions all together:
+1. subscriber_type column contains the pattern string "Member"
+2. start_station_id is  3792
+3. end_station_name is  "23rd & Rio Grande"
+4. The duration is between 128 and 539 minutes (but not including 128 and 539).
+
+        SELECT count( trip_id )
+        FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
+        WHERE 
+        (subscriber_type like "%Member%")
+        AND
+        (start_station_id=3792)
+        AND
+        (end_station_name="23rd & Rio Grande")
+        AND
+        duration_minutes > 128 and duration_minutes < 539 
