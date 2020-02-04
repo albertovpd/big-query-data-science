@@ -22,6 +22,31 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
 
 - Query table it's exactly like writing by hand the query. It just writes like a fill-the-gaps query for the table you're looking, to save time
 
+-----------------------
+
+# SELECT:
+
+- *   -   all
+- count(*)    -    numbers of records on the table
+- count(DISTINCT <column>)  -   print how many uniques
+- distinct <column> -   like pd.value_counts(). shows just the uniques
+
+# FROM
+
+# LIMIT
+
+- limit the number of shown records
+
+# ORDER BY
+
+- <column>  optional -  ASC / DESC
+- 
+    
+# SELECT __ as __ 
+
+    You can always give an alias to a column/table/whatever
+    
+
 # Chicago Crime dataset
 
 SELECT primary_type FROM `bigquery-public-data.chicago_crime.crime` LIMIT 10
