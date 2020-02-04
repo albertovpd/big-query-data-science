@@ -172,10 +172,10 @@ You can answer this question using a LIKE statement.
         WHERE subscriber_type like "W%"         #if must start with W, don't put % in the beginning
         
 12. How many bike rides meet the following conditions all together:
-1. subscriber_type column contains the pattern string "Member"
-2. start_station_id is  3792
-3. end_station_name is  "23rd & Rio Grande"
-4. The duration is between 128 and 539 minutes (but not including 128 and 539).
+        1. subscriber_type column contains the pattern string "Member"
+        2. start_station_id is  3792
+        3. end_station_name is  "23rd & Rio Grande"
+        4. The duration is between 128 and 539 minutes (but not including 128 and 539).
 
         SELECT count( trip_id )
         FROM `bigquery-public-data.austin_bikeshare.bikeshare_trips`
@@ -187,3 +187,42 @@ You can answer this question using a LIKE statement.
         (end_station_name="23rd & Rio Grande")
         AND
         duration_minutes > 128 and duration_minutes < 539 
+        
+# Quizz 4. Timestamp column
+
+2. How many taxi trips started between 2015-12-23 and 2015-12-27? Include these two dates in your query.
+
+        SELECT COUNT(DISTINCT unique_key) AS num_trips 
+        FROM `bigquery-public-data.chicago_taxi_trips.taxi_trips` 
+        WHERE trip_start_timestamp >= '2015-12-23' AND trip_start_timestamp <= '2015-12-27'
+
+3. How many trips started in the hours of (9,10,11,12) for all the years in the dataset except for 2016? That is, exclude any trip in the year 2016 from your answer.
+
+        SELECT COUNT(DISTINCT unique_key) AS num_trips 
+        FROM `bigquery-public-data.chicago_taxi_trips.taxi_trips` 
+        WHERE 
+        extract(hour from trip_start_timestamp) in (9,10,11,12) 
+        and
+        extract(year from trip_start_timestamp) != 2016
+        
+4. How many trips started within the 9th hour of the day (i.e. hour = 9) on October 31st from all the years strictly before 2017?
+
+        SELECT COUNT(DISTINCT unique_key) AS num_trips 
+        FROM `bigquery-public-data.chicago_taxi_trips.taxi_trips` 
+        WHERE 
+        extract(hour from trip_start_timestamp) = 9 
+        and 
+        extract(day from trip_start_timestamp) = 31 
+        and 
+        extract(month from trip_start_timestamp) = 10 
+        and
+        extract(year from trip_start_timestamp) < 2017
+
+
+5. Using only the years 2014 and 2016, how many trips started in the 16th week all together from both these two years?
+
+        SELECT COUNT(DISTINCT unique_key) AS num_trips 
+        FROM `bigquery-public-data.chicago_taxi_trips.taxi_trips` 
+        WHERE extract(week from trip_start_timestamp) = 16 
+        and extract(year from trip_start_timestamp) in (2014,2016)
+        
