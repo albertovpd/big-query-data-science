@@ -185,6 +185,19 @@ We can also do:
         
 it is not that easy to group by with more than 1 column (not like pandas), it needs to be consequent with the rest of columns
 
+# GROUP BY multiple columns
+ 
+https://www.udemy.com/course/sql-for-data-science-with-google-big-query/learn/lecture/13081162#overview
+
+
+        SELECT
+            column1, column2
+        FROM
+            TABLE
+        GROUP BY
+            column1, column2
+            
+
 ## Group by example:
 
         SELECT major_category  FROM `bigquery-public-data.london_crime.crime_by_lsoa` 
@@ -206,7 +219,7 @@ You'll get the uniques, but not how manu pf them. If summing values:
 
         LIMIT 1000
         
-it sums values. kind of weird because there is no column with "value". what will happen if there are more than 1 columns? this worhts checking
+it sums values. kind of weird because there is no column with "value".Value it's like saying "eh, all that, sum up!"
 ..----------------
 
 # LIMIT
