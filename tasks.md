@@ -226,3 +226,92 @@ You can answer this question using a LIKE statement.
         WHERE extract(week from trip_start_timestamp) = 16 
         and extract(year from trip_start_timestamp) in (2014,2016)
         
+# Quizz 5. 
+## Starting to use all conditions
+
+1. When counting the number of trees by health, which group within health has the least amount of trees?
+
+Which has the most? Note: Null can be an answer.
+
+        SELECT
+          health,
+          COUNT(DISTINCT tree_id) AS num_trees
+        FROM
+          `bigquery-public-data.new_york_trees.tree_census_2015`
+        GROUP BY
+          health
+        ORDER BY       
+          num_trees DESC
+          
+2. For each type of tree (use the spc_common column), calculate the average diameter (use the tree_dbh column).
+
+How many types of trees have an average diameter strictly greater than 10?
+
+        SELECT
+          COUNT(DISTINCT spc_common),
+          AVG(tree_dbh) AS media
+        FROM
+          `bigquery-public-data.new_york_trees.tree_census_2015`
+          -- i tried to put the following here:
+          --where
+          --media >10
+          -- nevertheless 1. it's not the position. 2. it's not hot to. always group by + having for this cases
+        GROUP BY
+          spc_common
+        HAVING
+          media >10
+        ORDER BY
+          media
+          
+3. Of all the trees that have a health status of "Poor" and a tree diameter greater than 10 ( tree_dbh > 10), how many are Damaged and how many are Not Damaged (as  measured by the sidewalk column)?
+
+        SELECT
+          sidewalk,
+          COUNT(DISTINCT tree_id) AS num_trees
+        FROM
+          `bigquery-public-data.new_york_trees.tree_census_2015`
+        WHERE
+          health = 'Poor'
+          AND tree_dbh > 10
+        GROUP BY
+          sidewalk
+
+4. Consider the trees for which user_type is "TreesCount Staff" or "NYC Parks Staff", and spc_common is not "London planetree", and curb_loc is "OffsetFromCurb". For the trees that meet these conditions, find the maximum tree_dbh for each of the different categories/groups in the guards column.
+
+        SELECT
+
+        guards, MAX(tree_dbh) AS max_tree_diameter 
+        FROM
+          `bigquery-public-data.new_york_trees.tree_census_2015`
+
+         where 
+         user_type in( "TreesCount Staff" , "NYC Parks Staff") 
+         and
+         spc_common != "London planetree"
+         and 
+         curb_loc  = "OffsetFromCurb"
+         group by 
+         guards 
+         
+5. What is the maximum, minimum, and average tree_dbh across the entire data set?
+
+
+HINT: When using  aggregate functions, you do not have to use a group by. You can just use aggregate functions in a simple select statement from the table. It will work as long as you are only returning aggregated columns and not ordering by any column.
+
+For example (although this is rather meaningless) it will still execute:
+
+
+SELECT
+
+  SUM(tree_dbh)
+
+FROM
+
+  `bigquery-public-data.new_york_trees.tree_census_2015`
+
+        SELECT
+          MAX(tree_dbh) AS max_tree_diameter,
+          MIN(tree_dbh ) AS min_tree_diameter,
+          AVG(tree_dbh ) AS average
+        FROM
+          `bigquery-public-data.new_york_trees.tree_census_2015`
