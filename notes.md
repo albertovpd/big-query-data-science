@@ -23,7 +23,32 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
 - Query table it's exactly like writing by hand the query. It just writes like a fill-the-gaps query for the table you're looking, to save time
 
 -----------------------
-    
+# Order:
+
+- SELECT
+- FROM
+- WHERE
+- GROUP BY
+- (just if group by was done) HAVING -- <>= --
+- ORDER BY
+- LIMIT
+
+        SELECT
+          contributing_factor_vehicle_1,
+          COUNT(*) AS num_accidents
+        FROM
+          `bigquery-public-data.new_york_mv_collisions.nypd_mv_collisions`
+        WHERE
+          contributing_factor_vehicle_1 != 'Unspecified'
+        GROUP BY
+          contributing_factor_vehicle_1
+        HAVING
+          num_accidents > 1000
+        ORDER BY
+          num_accidents DESC
+        LIMIT
+          1000
+          
 # SELECT __ as __ 
 
     You can always give an alias to a column/table/whatever
@@ -38,6 +63,7 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
 - SUM
 - AVG
 - MAX / MIX ... 
+- ROUND( ,n)    round to n the decimals
     
 -------------------------
 # cast / extract
@@ -142,8 +168,8 @@ We can also do:
         lower(<column> like '%word%')
         
 # GROUP BY
-
-- like in pandas
+- you can't do a "group by" if the rest of the rows have more than 1 element. check always taht
+- like in pandas, but pandaless and pandafunless
 - you only use HAVING when using a GROUP BY
 
         select 
@@ -156,7 +182,31 @@ We can also do:
         having
             num_people >1000000
         limit 1000
+        
+it is not that easy to group by with more than 1 column (not like pandas), it needs to be consequent with the rest of columns
 
+## Group by example:
+
+        SELECT major_category  FROM `bigquery-public-data.london_crime.crime_by_lsoa` 
+
+        LIMIT 1000
+
+Will give you a list of all crimes. Performing
+
+        SELECT major_category  FROM `bigquery-public-data.london_crime.crime_by_lsoa` 
+        group by major_category 
+
+        LIMIT 1000
+        
+You'll get the uniques, but not how manu pf them. If summing values:
+
+        SELECT major_category, sum(value) as num_crimes  
+        FROM `bigquery-public-data.london_crime.crime_by_lsoa`
+        group by major_category 
+
+        LIMIT 1000
+        
+it sums values. kind of weird because there is no column with "value". what will happen if there are more than 1 columns? this worhts checking
 ..----------------
 
 # LIMIT
