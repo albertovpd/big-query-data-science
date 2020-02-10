@@ -97,7 +97,12 @@ We can also do:
         
 (we can do this because is UTC format)
 
-
+# CASE
+    case
+        when condition1 then result1
+        when condition2 then result2
+        etc...
+        else result end as ...
 
 # FROM
 
