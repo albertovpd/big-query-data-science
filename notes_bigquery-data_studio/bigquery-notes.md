@@ -64,10 +64,13 @@ SELECT * FROM `bigquery-public-data.baseball.schedules` LIMIT 1000
 - AVG
 - MAX / MIX ... 
 - ROUND( ,n)    round to n the decimals
-    
+- concat(cast(<t1.column1> as __), )    :   to glue columns or modify rows  
+
+### https://cloud.google.com/bigquery/docs/reference
+
 -------------------------
 # cast / extract
-casting = when you change the type of a column
+casting :   it's like a lambda apply. con convert columns and more stuff. useful when you change the type of a column 
 DATE:   we need to cast the date like in the example
 
 extract = get some info that it's with more information in a row (it's like a pandas explode, or pd.split and create new columns, or an unwind in mongodb). it's cool because extract create new columns with the wanted information
@@ -100,7 +103,9 @@ We can also do:
 
 # JOIN
 
-- left join :   take all from the left table and select the common of the right table
+You can join all tables you want
+
+- left join :   take all from the left table and select the common of the right table. FROM <table1> LEFT JOIN <table2>... so the left one is the 1st
 - right join    :   goddamn the same
 - inner join    :   commons to both
 - you must put an alias to the table you're using like the following: (the table alias are "m" and "a", without writing "as" or whatever)
@@ -114,12 +119,18 @@ We can also do:
         LEFT JOIN
         `bigquery-public-data.census_bureau_international.country_names_area` a
         ON
-        m.country_code = a.country_code
+        --m.country_code = a.country_code
+        --to make sure there's match between tables:
+
+        trim(lower(m.country_code)) = trim(lower(a.country_code))
         ORDER BY
         year,
         country
 
-You need to be careful because when joining tables you create duplicates
+    - You need to be careful because when joining tables you create duplicates
+    - Maybe you need to lower columns to get a match, or in ON, put everything there like lower(cosa de 1 tabla)=lower(cosa de 2 tabla)
+
+
 
 
 # WHERE (aditional conditions)
@@ -257,3 +268,4 @@ it sums values. kind of weird because there is no column with "value".Value it's
 # Chicago Crime dataset
 
 SELECT primary_type FROM `bigquery-public-data.chicago_crime.crime` LIMIT 10
+sudo 
