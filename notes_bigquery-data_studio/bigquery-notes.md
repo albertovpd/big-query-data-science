@@ -98,6 +98,28 @@ We can also do:
 
 # FROM
 
+# JOIN
+
+- left join :   take all from the left table and select the common of the right table
+- right join    :   goddamn the same
+- inner join    :   commons to both
+- you must put an alias to the table you're using like the following: (the table alias are "m" and "a", without writing "as" or whatever)
+
+        SELECT
+        m.country_name,
+        -- you can't do  "a.country_name" because country name is already taken from "m"
+        m.year
+        FROM
+        `bigquery-public-data.census_bureau_international.midyear_population` m
+        LEFT JOIN
+        `bigquery-public-data.census_bureau_international.country_names_area` a
+        ON
+        m.country_code = a.country_code
+        ORDER BY
+        year,
+        country
+
+You need to be careful because when joining tables you create duplicates
 
 
 # WHERE (aditional conditions)
